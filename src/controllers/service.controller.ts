@@ -1,6 +1,6 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
-import { getServiceById, getServices } from "./services.service";
+import { getServiceById, getServices } from "../services/service.service";
 
 export const serviceRouter = Router();
 

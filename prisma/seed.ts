@@ -1,7 +1,8 @@
 import prisma from "../src/utils/db.server";
-import { services, users } from "./data";
+import { services, generateUsers } from "./data";
 
 async function main() {
+  const users = await generateUsers();
   for (let user of users) {
     await prisma.user.create({ data: user });
   }
