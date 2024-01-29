@@ -1,21 +1,44 @@
-import { IUser } from "../interfaces/entitiy";
+import { IUserCredential, IUserProfile } from "../interfaces/entitiy";
 import prisma from "../utils/db.server";
 
-export const insertUser = async (newUser: IUser) => {
-  const user = await prisma.user.create({ data: newUser });
-  return user;
-};
-
 export const findUsers = async () => {
-  return await prisma.user.findMany();
+  return await prisma.userCredential.findMany({
+    include: {
+      userProfile: true,
+    },
+  });
 };
 
-export const findUserByEmail = async (email: string) => {
-  return await prisma.user.findUnique({ where: { email: email } });
+export const findUserCredentialByEmail = async (email: string) => {
+  return await prisma.userCredential.findUnique({ where: { email: email } });
 };
 
-// export const findServiceById = async (serviceId: string) => {
-//   return await prisma.service.findUnique({ where: { id: serviceId } });
+export const insertUserCredential = async (newUser: IUserCredential) => {
+  return await prisma.userCredential.create({ data: newUser });
+};
+
+export const insertUserProfile = async (newProfile: IUserProfile) => {
+  return await prisma.userProfile.create({ data: newProfile });
+};
+
+export const findUserProfileById = async (credentialId: string) => {
+  return await prisma.userProfile.findUnique({ where: { user_credential_id: credentialId } });
+};
+
+// export const findUserCredentials = async () => {
+//   return await prisma.userCredential.findMany();
+// };
+
+// export const findUserProfiles = async () => {
+//   return await prisma.userProfile.findMany();
+// };
+
+// export const findUserByEmail = async (email: string) => {
+//   return await prisma.user.findUnique({ where: { email: email } });
+// };
+
+// export const findUserById = async (id: string) => {
+//   return await prisma.user.findUnique({ where: { id: id } });
 // };
 
 // export const updateUser = async () => {};

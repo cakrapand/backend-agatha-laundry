@@ -1,4 +1,4 @@
 export interface ITokenPayload {
-  uuid: string;
+  id: string;
   email: string;
 }

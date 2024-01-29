@@ -8,7 +8,8 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     if (!header) throw new Error("authorization required");
 
     const token = header.split(" ")[1];
-    verifyToken(token);
+    const currentUser = verifyToken(token);
+    res.locals.currentUser = currentUser;
 
     next();
   } catch (error: any) {

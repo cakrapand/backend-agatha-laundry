@@ -1,7 +1,14 @@
 import { Request, Response, Router } from "express";
-import { addUser, getUserByEmail, getUsers } from "../services/user.service";
 import { checkPassword, hashPassword } from "../helpers/hash";
 import { generateToken } from "../helpers/token";
+import {
+  createUserCredential,
+  createUserProfile,
+  getUserCredentialByEmail,
+  getUserProfileById,
+  getUsers,
+} from "../services/user.service";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 export const userRouter = Router();
 
@@ -16,16 +23,20 @@ userRouter.get("/", async (req: Request, res: Response) => {
 
 userRouter.post("/register", async (req: Request, res: Response) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, name, address } = req.body;
 
-    if (!email || !password || !name)
+    if (!email || !password || !name || !address)
       return res.status(400).json({ message: "Input invalid or empty" });
 
-    if (await getUserByEmail(email)) return res.status(400).json({ message: "email used" });
+    if (await getUserCredentialByEmail(email))
+      return res.status(400).json({ message: "email used" });
 
     const hashedPassword = await hashPassword(password);
-    const newUser = await addUser({ email, password: hashedPassword, name });
+    const newUser = await createUserCredential({ email, password: hashedPassword });
     if (!newUser) return res.status(400).json({ message: "create user fail" });
+
+    const newProfile = await createUserProfile({ address, name, user_credential_id: newUser.id });
+    if (!newProfile) return res.status(400).json({ message: "create profile fail" });
 
     return res.status(201).json({ message: "user created" });
   } catch (error: any) {
@@ -39,15 +50,29 @@ userRouter.post("/login", async (req: Request, res: Response) => {
 
     if (!email || !password) return res.status(400).json({ message: "Input invalid or empty" });
 
-    const user = await getUserByEmail(email);
+    const userCredential = await getUserCredentialByEmail(email);
 
-    if (!user) return res.status(400).json({ message: "Wrong email or password" });
+    if (!userCredential) return res.status(400).json({ message: "Wrong email or password" });
 
-    if (!(await checkPassword(password, user.password)))
+    if (!(await checkPassword(password, userCredential.password)))
       return res.status(400).json({ message: "Wrong email or password" });
 
-    const token = generateToken({ uuid: user.id, email: user.email });
-    return res.status(200).json({ uuid: user.id, token });
+    const token = generateToken({ id: userCredential.id, email: userCredential.email });
+    return res.status(200).json({ uuid: userCredential.id, token });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+userRouter.get("/profile", authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { currentUser } = res.locals;
+    if (!currentUser) return res.status(400).json({ message: "Unauthorized" });
+
+    const profile = await getUserProfileById(currentUser.id);
+    if (!profile) return res.status(400).json({ message: "Profile not found" });
+
+    return res.status(200).send(profile);
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }

@@ -1,13 +1,27 @@
+import { hashPassword } from "../src/helpers/hash";
 import prisma from "../src/utils/db.server";
-import { services, generateUsers } from "./data";
+import { faker } from "@faker-js/faker";
 
 async function main() {
-  const users = await generateUsers();
-  for (let user of users) {
-    await prisma.user.create({ data: user });
-  }
-  for (let service of services) {
-    await prisma.service.create({ data: service });
+  const password = await hashPassword("password");
+  for (let i = 0; i < 5; i++) {
+    const id = faker.string.uuid();
+
+    await prisma.userCredential.create({
+      data: {
+        id: id,
+        email: faker.internet.email(),
+        password: password,
+      },
+    });
+
+    await prisma.userProfile.create({
+      data: {
+        name: faker.person.fullName(),
+        address: faker.location.street(),
+        user_credential_id: id,
+      },
+    });
   }
 }
 
