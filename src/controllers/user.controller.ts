@@ -4,6 +4,7 @@ import { generateToken } from "../helpers/token";
 import {
   createUserCredential,
   createUserProfile,
+  editUserProfileById,
   getUserCredentialByEmail,
   getUserProfileById,
   getUsers,
@@ -73,6 +74,29 @@ userRouter.get("/profile", authMiddleware, async (req: Request, res: Response) =
     if (!profile) return res.status(400).json({ message: "Profile not found" });
 
     return res.status(200).send(profile);
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+userRouter.patch("/profile", authMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { currentUser } = res.locals;
+    if (!currentUser) return res.status(400).json({ message: "Unauthorized" });
+
+    const { name, address } = req.body;
+    if (!name || !address) return res.status(400).json({ message: "Input invalid or empty" });
+
+    const profile = await getUserProfileById(currentUser.id);
+    if (!profile) return res.status(400).json({ message: "Profile not found" });
+
+    await editUserProfileById({
+      name,
+      address,
+      user_credential_id: currentUser.id,
+    });
+
+    return res.status(201).json({ message: "User updated" });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }

@@ -10,6 +10,7 @@ import {
   findUsers,
   insertUserCredential,
   insertUserProfile,
+  updateUserProfileById,
 } from "../repository/user.repository";
 
 export const getUsers = async () => {
@@ -20,16 +21,20 @@ export const getUserCredentialByEmail = async (email: string) => {
   return await findUserCredentialByEmail(email);
 };
 
-export const createUserCredential = async (newUser: IUserCredential) => {
-  return await insertUserCredential(newUser);
+export const createUserCredential = async (newUserCredential: IUserCredential) => {
+  return await insertUserCredential(newUserCredential);
 };
 
-export const createUserProfile = async (newUser: IUserProfile) => {
-  return await insertUserProfile(newUser);
+export const createUserProfile = async (newUserProfile: IUserProfile) => {
+  return await insertUserProfile(newUserProfile);
 };
 
 export const getUserProfileById = async (credentialId: string) => {
   return await findUserProfileById(credentialId);
+};
+
+export const editUserProfileById = async (newUserProfile: IUserProfile) => {
+  return await updateUserProfileById(newUserProfile);
 };
 
 // export const getUserCredentials = async () => {
