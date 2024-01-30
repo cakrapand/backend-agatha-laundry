@@ -2,9 +2,7 @@ import prisma from "../utils/db.server";
 import { Service } from "@prisma/client";
 
 export const insertService = async (newService: Service) => {
-  const service = await prisma.service.create({ data: newService });
-
-  return service;
+  return await prisma.service.create({ data: newService });
 };
 
 export const findServices = async () => {

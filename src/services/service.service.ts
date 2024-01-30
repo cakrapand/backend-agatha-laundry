@@ -2,8 +2,7 @@ import { Service } from "@prisma/client";
 import { findServiceById, findServices, insertService } from "../repository/service.repository";
 
 export const addService = async (newService: Service) => {
-  const service = await insertService(newService);
-  return service;
+  return await insertService(newService);
 };
 
 export const getServices = async () => {

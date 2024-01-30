@@ -18,7 +18,7 @@ serviceRouter.get("/:id", async (req: Request, res: Response) => {
   try {
     const service = await getServiceById(id);
     if (service) return res.status(200).json(service);
-    return res.status(404).json("Service not found");
+    return res.status(404).json({ message: "Service not found" });
   } catch (error: any) {
     return res.status(500).json(error.message);
   }

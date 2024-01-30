@@ -53,9 +53,7 @@ userRouter.post("/login", async (req: Request, res: Response) => {
 
     const userCredential = await getUserCredentialByEmail(email);
 
-    if (!userCredential) return res.status(400).json({ message: "Wrong email or password" });
-
-    if (!(await checkPassword(password, userCredential.password)))
+    if (!userCredential || !(await checkPassword(password, userCredential.password)))
       return res.status(400).json({ message: "Wrong email or password" });
 
     const token = generateToken({ id: userCredential.id, email: userCredential.email });
