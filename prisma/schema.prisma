@@ -12,22 +12,25 @@ datasource db {
 }
 
 model UserCredential {
-  id          String       @id @default(uuid())
-  email       String       @unique
-  password    String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @default(now())
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
   userProfile UserProfile?
 }
 
 model UserProfile {
-  id                 String         @id @default(uuid())
-  userCredential     UserCredential @relation(fields: [user_credential_id], references: [id])
-  user_credential_id String         @unique
-  name               String
-  address            String
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @default(now())
+  id               String   @id @default(uuid())
+  userCredentialId String   @unique
+  name             String
+  address          String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @default(now())
+
+  userCredential UserCredential @relation(fields: [userCredentialId], references: [id])
 }
 
 model Service {
@@ -36,4 +39,27 @@ model Service {
   price     Float
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+
+  Order Order?
+}
+
+model Order {
+  id               String       @id @default(uuid())
+  userCredentialId String       @unique
+  serviceId        String       @unique
+  transcation      Transaction?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @default(now())
+
+  userCredential UserCredential @relation(fields: [userCredentialId], references: [id])
+  service        Service        @relation(fields: [serviceId], references: [id])
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  orderId   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id])
 }
