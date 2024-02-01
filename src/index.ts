@@ -4,6 +4,7 @@ import cors from "cors";
 import { serviceRouter } from "./controllers/service.controller";
 import { userRouter } from "./controllers/user.controller";
 import { authMiddleware } from "./middlewares/auth.middleware";
+import { orderRouter } from "./controllers/order.controller";
 
 dotenv.configDotenv();
 
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/users", userRouter);
 app.use("/api/services", authMiddleware, serviceRouter);
+app.use("/api/orders", authMiddleware, orderRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

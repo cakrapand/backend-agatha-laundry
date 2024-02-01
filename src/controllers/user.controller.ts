@@ -36,7 +36,7 @@ userRouter.post("/register", async (req: Request, res: Response) => {
     const newUser = await createUserCredential({ email, password: hashedPassword });
     if (!newUser) return res.status(400).json({ message: "create user fail" });
 
-    const newProfile = await createUserProfile({ address, name, user_credential_id: newUser.id });
+    const newProfile = await createUserProfile({ address, name, userCredentialId: newUser.id });
     if (!newProfile) return res.status(400).json({ message: "create profile fail" });
 
     return res.status(201).json({ message: "user created" });
@@ -91,7 +91,7 @@ userRouter.patch("/profile", authMiddleware, async (req: Request, res: Response)
     await editUserProfileById({
       name,
       address,
-      user_credential_id: currentUser.id,
+      userCredentialId: currentUser.id,
     });
 
     return res.status(201).json({ message: "User updated" });

@@ -11,7 +11,7 @@ import {
   insertUserCredential,
   insertUserProfile,
   updateUserProfileById,
-} from "../repository/user.repository";
+} from "../repositories/user.repository";
 
 export const getUsers = async () => {
   return await findUsers();

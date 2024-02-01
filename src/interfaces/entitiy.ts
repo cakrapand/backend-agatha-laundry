@@ -6,10 +6,15 @@ export interface IUserCredential {
 export interface IUserProfile {
   name: string;
   address: string;
-  user_credential_id: string;
+  userCredentialId: string;
 }
 
 export interface IService {
   name: string;
   price: number;
+}
+
+export interface IOrder {
+  userCredentialId: string;
+  serviceId: string;
 }

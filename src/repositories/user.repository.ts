@@ -22,17 +22,13 @@ export const insertUserProfile = async (newProfile: IUserProfile) => {
 };
 
 export const findUserProfileById = async (credentialId: string) => {
-  return await prisma.userProfile.findUnique({ where: { user_credential_id: credentialId } });
+  return await prisma.userProfile.findUnique({ where: { userCredentialId: credentialId } });
 };
 
-export const updateUserProfileById = async ({
-  name,
-  address,
-  user_credential_id,
-}: IUserProfile) => {
+export const updateUserProfileById = async ({ name, address, userCredentialId }: IUserProfile) => {
   return await prisma.userProfile.update({
     where: {
-      user_credential_id: user_credential_id,
+      userCredentialId: userCredentialId,
     },
     data: {
       name,
