@@ -24,7 +24,7 @@ userRouter.get("/", async (req: Request, res: Response) => {
 
 userRouter.post("/register", async (req: Request, res: Response) => {
   try {
-    const { email, password, name, address } = req.body;
+    const { email, password, name, address, phone } = req.body;
 
     if (!email || !password || !name || !address)
       return res.status(400).json({ message: "Input invalid or empty" });
@@ -36,7 +36,12 @@ userRouter.post("/register", async (req: Request, res: Response) => {
     const newUser = await createUserCredential({ email, password: hashedPassword });
     if (!newUser) return res.status(400).json({ message: "create user fail" });
 
-    const newProfile = await createUserProfile({ address, name, userCredentialId: newUser.id });
+    const newProfile = await createUserProfile({
+      address,
+      name,
+      userCredentialId: newUser.id,
+      phone,
+    });
     if (!newProfile) return res.status(400).json({ message: "create profile fail" });
 
     return res.status(201).json({ message: "user created" });
@@ -82,7 +87,7 @@ userRouter.patch("/profile", authMiddleware, async (req: Request, res: Response)
     const { currentUser } = res.locals;
     if (!currentUser) return res.status(400).json({ message: "Unauthorized" });
 
-    const { name, address } = req.body;
+    const { name, address, phone } = req.body;
     if (!name || !address) return res.status(400).json({ message: "Input invalid or empty" });
 
     const profile = await getUserProfileById(currentUser.id);
@@ -92,6 +97,7 @@ userRouter.patch("/profile", authMiddleware, async (req: Request, res: Response)
       name,
       address,
       userCredentialId: currentUser.id,
+      phone,
     });
 
     return res.status(201).json({ message: "User updated" });

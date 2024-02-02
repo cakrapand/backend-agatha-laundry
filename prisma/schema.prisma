@@ -27,6 +27,7 @@ model UserProfile {
   userCredentialId String   @unique
   name             String
   address          String
+  phone            String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @default(now())
 
@@ -37,18 +38,30 @@ model Service {
   id        String   @id @default(uuid())
   name      String   @unique
   price     Float
-  // duration  Float
+  duration  Float
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
   Order Order[]
 }
 
+enum OrderStatus {
+  PAYMENT
+  PICKED_UP
+  ON_PROGRESS
+  ON_DELIVER
+  DONE
+  CANCEL
+}
+
 model Order {
   id               String       @id @default(uuid())
   userCredentialId String
   serviceId        String
+  quantity         Float
   transcation      Transaction?
+  redirectUrl      String       @unique
+  orderStatus      OrderStatus  @default(PAYMENT)
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @default(now())
 
@@ -56,11 +69,19 @@ model Order {
   service        Service        @relation(fields: [serviceId], references: [id])
 }
 
+enum TransactionStatus {
+  PENDING
+  FAILURE
+  SUCCESS
+}
+
 model Transaction {
-  id        String   @id @default(uuid())
-  orderId   String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id                String            @id @default(uuid())
+  orderId           String            @unique
+  amount            Float
+  transactionStatus TransactionStatus @default(PENDING)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @default(now())
 
   order Order @relation(fields: [orderId], references: [id])
 }
