@@ -39,7 +39,7 @@ orderRouter.post("/", authMiddleware, async (req: Request, res: Response) => {
 
     const response = await charge({
       order_id: orderId,
-      gross_amount: service.price * quantity,
+      gross_amount: service.price * +quantity,
       name: userProfile.name,
       email: currentUser.email,
       phone: userProfile.phone,
@@ -53,12 +53,12 @@ orderRouter.post("/", authMiddleware, async (req: Request, res: Response) => {
       serviceId,
       userCredentialId: currentUser.id,
       redirectUrl: snapToken.redirect_url,
-      quantity,
+      quantity: +quantity,
     });
 
     return res.status(201).send(order);
   } catch (error: any) {
-    return res.status(500).json(error.message);
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
