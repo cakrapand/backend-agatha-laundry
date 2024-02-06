@@ -10,6 +10,8 @@ import { getUserProfileById } from "../services/user.service";
 import { charge } from "../helpers/midtrans";
 import { createTransaction, editTransactionStatusById } from "../services/transaction.service";
 import { authMiddleware } from "../middlewares/auth.middleware";
+import validate from "../middlewares/validate.middleware";
+import { createOrderSchema } from "../schema/order.schema";
 
 export const orderRouter = Router();
 
@@ -23,44 +25,48 @@ orderRouter.get("/", authMiddleware, async (req: Request, res: Response) => {
   }
 });
 
-orderRouter.post("/", authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const { serviceId, quantity } = req.body;
-    if (!serviceId || !quantity) return res.status(400).json({ message: "Empty or invalid input" });
+orderRouter.post(
+  "/",
+  authMiddleware,
+  validate(createOrderSchema),
+  async (req: Request, res: Response) => {
+    try {
+      const { serviceId, quantity } = req.body;
 
-    const service = await getServiceById(serviceId);
-    if (!service) return res.status(404).json({ message: "Service not found" });
+      const service = await getServiceById(serviceId);
+      if (!service) return res.status(404).json({ message: "Service not found" });
 
-    const { currentUser } = res.locals;
-    const userProfile = await getUserProfileById(currentUser.id);
-    if (!userProfile) return res.status(400).json({ message: "User not found" });
+      const { currentUser } = res.locals;
+      const userProfile = await getUserProfileById(currentUser.id);
+      if (!userProfile) return res.status(400).json({ message: "User not found" });
 
-    const orderId = "order-csb-" + "" + Math.round(new Date().getTime() / 1000);
+      const orderId = "order-csb-" + "" + Math.round(new Date().getTime() / 1000);
 
-    const response = await charge({
-      order_id: orderId,
-      gross_amount: service.price * +quantity,
-      name: userProfile.name,
-      email: currentUser.email,
-      phone: userProfile.phone,
-      address: userProfile.address,
-    });
-    if (!response.ok) res.status(response.status).json({ message: response.statusText });
-    const snapToken = await response.json();
+      const response = await charge({
+        order_id: orderId,
+        gross_amount: service.price * +quantity,
+        name: userProfile.name,
+        email: currentUser.email,
+        phone: userProfile.phone,
+        address: userProfile.address,
+      });
+      if (!response.ok) res.status(response.status).json({ message: response.statusText });
+      const snapToken = await response.json();
 
-    const order = await createOrder({
-      id: orderId,
-      serviceId,
-      userCredentialId: currentUser.id,
-      redirectUrl: snapToken.redirect_url,
-      quantity: +quantity,
-    });
+      const order = await createOrder({
+        id: orderId,
+        serviceId,
+        userCredentialId: currentUser.id,
+        redirectUrl: snapToken.redirect_url,
+        quantity: +quantity,
+      });
 
-    return res.status(201).send(order);
-  } catch (error: any) {
-    return res.status(500).json({ message: "Something went wrong" });
+      return res.status(201).send(order);
+    } catch (error: any) {
+      return res.status(500).json({ message: "Something went wrong" });
+    }
   }
-});
+);
 
 orderRouter.post("/handling", async (req: Request, res: Response) => {
   try {
