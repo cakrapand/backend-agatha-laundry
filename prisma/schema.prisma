@@ -44,15 +44,34 @@ model Admin {
   updatedAt    DateTime @default(now())
 }
 
-model Service {
+model Package {
   id        String   @id @default(uuid())
   name      String   @unique
-  price     Float
   duration  Float
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
-  Order Order[]
+  PackageOnService PackageOnService[]
+}
+
+model Service {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  PackageOnService PackageOnService[]
+}
+
+model PackageOnService {
+  id          String        @id @default(uuid())
+  packageId   String
+  serviceId   String
+  price       Float
+  OrderDetail OrderDetail[]
+
+  package Package @relation(fields: [packageId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id])
 }
 
 enum OrderStatus {
@@ -65,18 +84,28 @@ enum OrderStatus {
 }
 
 model Order {
-  id               String       @id @default(uuid())
+  id               String        @id @default(uuid())
   userCredentialId String
-  serviceId        String
-  quantity         Float
   transcation      Transaction?
-  redirectUrl      String       @unique
-  orderStatus      OrderStatus  @default(PAYMENT)
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @default(now())
+  orderDetail      OrderDetail[]
+  redirectUrl      String        @unique
+  orderStatus      OrderStatus   @default(PAYMENT)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @default(now())
 
   userCredential UserCredential @relation(fields: [userCredentialId], references: [id])
-  service        Service        @relation(fields: [serviceId], references: [id])
+}
+
+model OrderDetail {
+  id                 String   @id @default(uuid())
+  orderId            String
+  packageOnServiceId String
+  quantity           Float
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now())
+
+  Order            Order            @relation(fields: [orderId], references: [id])
+  packageOnService PackageOnService @relation(fields: [packageOnServiceId], references: [id])
 }
 
 enum TransactionStatus {
