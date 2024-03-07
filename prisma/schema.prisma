@@ -34,6 +34,16 @@ model UserProfile {
   userCredential UserCredential @relation(fields: [userCredentialId], references: [id])
 }
 
+model Admin {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  password     String
+  name         String
+  isSuperAdmin Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+}
+
 model Service {
   id        String   @id @default(uuid())
   name      String   @unique
