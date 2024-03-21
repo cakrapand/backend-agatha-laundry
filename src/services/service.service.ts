@@ -1,16 +1,14 @@
 import { Service } from "@prisma/client";
-import { findServiceById, findServices, insertService } from "../repositories/service.repository";
+import { findServiceById, findServices } from "../repositories/service.repository";
 
-export const addService = async (newService: Service) => {
-  return await insertService(newService);
-};
+export const addService = async (newService: Service) => {};
 
 export const getServices = async () => {
   return await findServices();
 };
 
-export const getServiceById = async (serviceId: string) => {
-  return await findServiceById(serviceId);
+export const getServiceById = async (packageOnServiceId: string) => {
+  return await findServiceById(packageOnServiceId);
 };
 
 export const editServiceById = async () => {};

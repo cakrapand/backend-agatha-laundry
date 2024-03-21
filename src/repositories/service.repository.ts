@@ -1,16 +1,25 @@
 import prisma from "../utils/db.server";
 import { Service } from "@prisma/client";
 
-export const insertService = async (newService: Service) => {
-  return await prisma.service.create({ data: newService });
-};
+export const insertService = async (newService: Service) => {};
 
 export const findServices = async () => {
-  return await prisma.service.findMany();
+  return await prisma.packageOnService.findMany({
+    include: {
+      package: true,
+      service: true,
+    },
+  });
 };
 
-export const findServiceById = async (serviceId: string) => {
-  return await prisma.service.findUnique({ where: { id: serviceId } });
+export const findServiceById = async (packageOnServiceId: string) => {
+  return await prisma.packageOnService.findUnique({
+    where: { id: packageOnServiceId },
+    include: {
+      package: true,
+      service: true,
+    },
+  });
 };
 
 export const updateService = async () => {};

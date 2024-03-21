@@ -1,9 +1,10 @@
 import { OrderStatus } from "@prisma/client";
-import { IOrder } from "../interfaces/entitiy";
+import { IOrder, IOrderDetail } from "../interfaces/entitiy";
 import {
-  findOrdersById,
   findOrders,
+  findOrdersById,
   insertOrder,
+  insertOrderDetail,
   updateOrderStatusById,
 } from "../repositories/order.repository";
 
@@ -17,6 +18,10 @@ export const getOrdersById = async (userCredentialId: string) => {
 
 export const createOrder = async (newOrder: IOrder) => {
   return await insertOrder(newOrder);
+};
+
+export const createOrderDetail = async (newOrderDetail: IOrderDetail) => {
+  return await insertOrderDetail(newOrderDetail);
 };
 
 export const editOrderStatusById = async (id: string, orderStatus: OrderStatus) => {

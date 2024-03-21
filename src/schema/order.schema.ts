@@ -1,8 +1,12 @@
-import { number, object, string } from "zod";
+import { array, number, object, string } from "zod";
 
 export const createOrderSchema = object({
   body: object({
-    serviceId: string({ required_error: "Service Id is required" }),
-    quantity: number({ required_error: "Quantity is required" }),
+    orderDetails: array(
+      object({
+        packageOnServiceId: string({ required_error: "packageOnServiceId is required" }),
+        // quantity: number({ required_error: "Quantity is required" }),
+      })
+    ).nonempty("Order Detail is Required"),
   }),
 });

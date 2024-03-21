@@ -1,5 +1,3 @@
-import { TransactionStatus } from "@prisma/client";
-
 export interface IUserCredential {
   email: string;
   password: string;
@@ -18,11 +16,16 @@ export interface IService {
 }
 
 export interface IOrder {
-  id: string;
+  // id: string;
   userCredentialId: string;
-  serviceId: string;
-  quantity: number;
-  redirectUrl: string;
+  // redirectUrl: string;
+  // amount: number;
+}
+
+export interface IOrderDetail {
+  orderId: string;
+  packageOnServiceId: string;
+  // quantity: number;
 }
 
 export interface ITransaction {

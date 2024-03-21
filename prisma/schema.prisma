@@ -75,7 +75,7 @@ model PackageOnService {
 }
 
 enum OrderStatus {
-  PAYMENT
+  // PAYMENT
   PICKED_UP
   ON_PROGRESS
   ON_DELIVER
@@ -86,10 +86,11 @@ enum OrderStatus {
 model Order {
   id               String        @id @default(uuid())
   userCredentialId String
-  transcation      Transaction?
+  // transcation      Transaction?
   orderDetail      OrderDetail[]
-  redirectUrl      String        @unique
-  orderStatus      OrderStatus   @default(PAYMENT)
+  // redirectUrl      String        @unique
+  amount           Float         @default(0)
+  orderStatus      OrderStatus   @default(PICKED_UP)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @default(now())
 
@@ -100,7 +101,7 @@ model OrderDetail {
   id                 String   @id @default(uuid())
   orderId            String
   packageOnServiceId String
-  quantity           Float
+  quantity           Float    @default(0)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @default(now())
 
@@ -108,19 +109,19 @@ model OrderDetail {
   packageOnService PackageOnService @relation(fields: [packageOnServiceId], references: [id])
 }
 
-enum TransactionStatus {
-  PENDING
-  FAILURE
-  SUCCESS
-}
+// enum TransactionStatus {
+//   PENDING
+//   FAILURE
+//   SUCCESS
+// }
 
-model Transaction {
-  id                String            @id @default(uuid())
-  orderId           String            @unique
-  amount            Float
-  transactionStatus TransactionStatus @default(PENDING)
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @default(now())
+// model Transaction {
+//   id                String            @id @default(uuid())
+//   orderId           String            @unique
+//   amount            Float
+//   transactionStatus TransactionStatus @default(PENDING)
+//   createdAt         DateTime          @default(now())
+//   updatedAt         DateTime          @default(now())
 
-  order Order @relation(fields: [orderId], references: [id])
-}
+//   order Order @relation(fields: [orderId], references: [id])
+// }

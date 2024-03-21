@@ -1,10 +1,11 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
 import { getServiceById, getServices } from "../services/service.service";
+import { authMiddleware } from "../middlewares/auth.middleware";
 
 export const serviceRouter = Router();
 
-serviceRouter.get("/", async (req: Request, res: Response) => {
+serviceRouter.get("/", authMiddleware, async (req: Request, res: Response) => {
   try {
     const services = await getServices();
     return res.send(services);
@@ -13,7 +14,7 @@ serviceRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
-serviceRouter.get("/:id", async (req: Request, res: Response) => {
+serviceRouter.get("/:id", authMiddleware, async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     const service = await getServiceById(id);
